@@ -1,0 +1,35 @@
+---
+- name: Download the java RPM
+  get_url:
+    "headers='Cookie: oraclelicense=accept-securebackup-cookie'
+    url={{ oracle_java_rpm_url }}
+    dest={{ oracle_java_dest_dir }}"
+
+- name: Install java
+  yum:
+    name={{ oracle_java_dest_dir }}/{{ oracle_java_rpm_filename }}
+    state=present
+
+- name: link /usr/java/default
+  file: 
+    dest=/usr/java/default 
+    src="/usr/java/jdk{{ oracle_java_version_string }}" 
+    state=link
+
+- name: alternatives link for "java"
+  alternatives: 
+    name=java 
+    link=/usr/bin/java  
+    path=/usr/java/default/bin/java
+
+- name: alternatives link for "javac"
+  alternatives: 
+    name=javac
+    link=/usr/bin/javac
+    path=/usr/java/default/bin/javac
+
+- name: alternatives link for "jar"
+  alternatives:
+    name=jar link=/usr/bin/jar
+    path=/usr/java/default/bin/jar
+
